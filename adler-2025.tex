@@ -221,22 +221,68 @@ To validate these derivations, we performed Monte Carlo simulations for both sys
     \label{fig:entropy_variance}
 \end{figure}
 
+\section{Bayesian Updating in ABC Systems and the Unconstrained System}
 
-\subsection{Probability Distribution}
+ABC systems highlight a key distinction between Bayesian \cite{mcgrayne2011theory} updating and frequentist probabilities, illustrating their respective roles in evolving versus static systems. Bayesian updating provides a dynamic framework for incorporating information between generations, making it a hallmark of systems capable of evolution and self-organization. In this context, the "prior" has a literal meaning, referring directly to the probability distribution of the prior generation, rather than a subjective interpretation of probability or a framework for hypothesis testing.
 
-To gain deeper insight into the relative abundances of patterns, we define a probability distribution $\mathbf{p}_t$ as the normalized form of the population vector $\mathbf{n}_t$:
-\begin{equation}
-\mathbf{p}_t = \frac{\mathbf{n}_t}{\sum_i n_{i,t}},
-\end{equation}
-where $n_{i,t}$ represents the count of the $i$th pattern at generation $t$. This distribution evolves alongside the population vector, driven by the same interaction dynamics and stability constraints.
+This interpretation reflects the dependency between the probability distributions at successive generations in any evolving system. Specifically, in ABC systems, the evolving state space emerges from the interactions and stabilities of patterns, leading to a probability space that changes over time. At any specific generation, the probabilities are frequentist, describing the relative frequencies of patterns. However, the evolution of these probabilities across generations is inherently Bayesian, as the prior distribution directly influences the current generation.
 
-Patterns with higher stability values tend to dominate the probability distribution over time, creating a feedback loop where stability influences persistence and interaction likelihoods. This probabilistic perspective highlights the balance between exploration and exploitation in the system's evolution.
+\subsection{Bayesian Updating in ABC Systems}
 
-\subsection{Integration of Vector and Graph Frameworks}
+In ABC systems, the probability of a pattern \( p \) at generation \( t+1 \) depends on its prior probability \( P(p_t) \), the probabilities of other patterns \( P(q_t) \), and the stability of their interactions \( S(p, q) \). The update rule can be expressed as:
+\[
+P(p_{t+1}) = \frac{P(p_t) \cdot \sum_{q \in P} P(q_t) \cdot S(p, q)}{\sum_{p' \in P} P(p'_t) \cdot \sum_{q \in P} P(q_t) \cdot S(p', q)},
+\]
+where:
+\begin{itemize}
+    \item \( P(p_t) \): The prior probability of \( p \) at generation \( t \).
+    \item \( P(q_t) \): The probabilities of interacting patterns \( q \) at generation \( t \).
+    \item \( S(p, q) \): The stability of interactions that produce or sustain \( p \) through \( q \).
+\end{itemize}
 
-The vector and graph-based representations are inherently complementary. The vector framework offers a compact and efficient way to track population dynamics, while the graph framework captures the adaptive topology and interaction pathways that drive the evolution of complexity. Together, they provide a unified view of ABC systems.
+This update rule can be directly related to Bayes' theorem by conditioning \( P(p_{t+1}) \) on the set of observed patterns \( O_t \) generated in prior generations. Using Bayes' theorem:
+\[
+P(p_{t+1}) = P(p_t | O_t) = \frac{P(O_t | p_t) \cdot P(p_t)}{P(O_t)},
+\]
+where:
+\begin{itemize}
+    \item \( P(p_t) \): The prior probability of \( p \) in generation \( t \), representing its abundance in the previous generation.
+    \item \( P(O_t | p_t) \): The likelihood that \( p \) contributes to the generation of the observed interactions \( O_t \), determined by the stabilities \( S(p, q) \).
+    \item \( P(O_t) \): The normalization term, summing over all patterns \( p' \):
+    \[
+    P(O_t) = \sum_{p' \in P} P(O_t | p'_t) \cdot P(p'_t).
+    \]
+\end{itemize}
 
-By integrating these approaches, we can address key aspects of the behavior of the system. The vector representation ensures the conservation of tokens and facilitates the analysis of population distributions, while the graph representation models the dynamic creation and dissolution of patterns. This dual perspective enables us to explore emergent phenomena such as resource allocation, self-organization, and path-dependent evolution, which are fundamental to understanding the dynamics of ABC systems. The synergy between these frameworks will be further illustrated in subsequent sections, where we examine specific emergent behaviors and their implications for information evolution.
+Equation \( P(p_{t+1}) = P(p_t \mid O_t) \) signifies that the probability of a pattern \( p \) in generation \( t+1 \) depends on its prior probability \( P(p_t) \) in generation \( t \), conditioned on the observed patterns or interactions \( O_t \) that occurred during generation \( t \). In ABC systems, this relationship captures the evolving nature of the probability space, where the observed interactions \( O_t \) act as a feedback mechanism that biases the distribution toward patterns that are more stable or frequent. Patterns with higher prior probabilities (\( P(p_t) \)) and those that contribute more significantly to the observed set \( O_t \) are preferentially amplified. This dynamic introduces selection pressure, ensuring that the system evolves by favoring patterns that interact effectively or persist due to stability. In contrast, unconstrained systems lack such feedback, as stability is uniform and all patterns interact equally, resulting in a static, uniform probability distribution that does not evolve over generations.
+
+
+This interpretation emphasizes the dual role of Bayes' formula in ABC systems, as generational memory, where the prior \( P(p_t) \) ensures continuity by preserving information about patterns from the previous generation.
+It also serves as selective amplification, where likelihood \( P(O_t | p_t) \) introduces selection pressure by favoring patterns that contribute more to observed interactions.
+
+\subsection{Comparison with the Unconstrained System}
+
+In contrast, the unconstrained system does not exhibit the evolutionary dynamics necessary for Bayesian updating. Here, interactions occur without stability constraints, and all patterns are equally likely to form. This leads to:
+\begin{enumerate}
+    \item \textbf{Uniform Probability Distribution:} At each generation, the probability of any pattern \( p \) is determined solely by the combinatorial structure of the interactions, with no dependency on the prior generation. The probability distribution remains uniform:
+    \[
+    P(p_{t+1}) \approx \frac{1}{|S|},
+    \]
+    where \( |S| \) is the size of the combinatorial sample space.
+
+    \item \textbf{Absence of Selection Pressure:} Since stability is uniform, each pattern has the same probability of interacting, regardless of its prior abundance. This uniformity ensures that the sampling of the unconstrained state space remains unbiased, preventing any evolution or concentration of probabilities over time.
+
+    \item \textbf{Ergodic Sampling of the State Space:} The system uniformly and ergodically samples the entire unconstrained state space. Each generation independently reflects the full combinatorial possibilities of the system.
+
+    \item \textbf{No Evolution of the Probability Space:} The lack of stability constraints means there is no mechanism to influence the state space over time. The probability distribution is static and independent of the prior generation.
+\end{enumerate}
+
+\subsection{Implications for Evolving Systems}
+
+The contrast between the ABC system and the unconstrained system underscores the significance of stability constraints in enabling Bayesian updating. In the ABC system, stability biases introduce selection pressure, which concentrates the population on high-stability patterns and shapes the probability distribution over generations. This evolving probability space bridges frequentist probabilities (within generations) and Bayesian dependencies (between generations), enabling the system to adapt and explore the "adjacent possible" \cite{kauffman2000investigations}.
+
+In the unconstrained system, the uniformity of stability eliminates selection pressure, resulting in static probabilities that do not evolve. The ergodic sampling of the unconstrained state space leads to a combinatorial explosion of possibilities, but without any mechanism to guide or adapt the system's dynamics. This lack of evolution highlights the role of stability constraints in fostering self-organization and adaptive behavior in ABC systems.
+
 
 \section{Graph-Based Representation of ABC Systems}
 
